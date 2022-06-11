@@ -16,7 +16,6 @@ function SignUp() {
     email: '',
     password: '',
   })
-
   const { name, email, password } = formData
   const navigate = useNavigate()
   const onChange = (e) => {
@@ -29,14 +28,12 @@ function SignUp() {
     e.preventDefault()
     try {
       const auth = getAuth()
-
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password,
       )
-
-      const user = user.Credential.user
+      const user = userCredential.user
 
       updateProfile(auth.currentUser, {
         displayName: name,
