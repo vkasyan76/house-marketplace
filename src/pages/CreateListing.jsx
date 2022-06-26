@@ -5,6 +5,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase.config'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
@@ -20,7 +21,7 @@ function CreateListing() {
     name: '',
     bedrooms: 1,
     bathrooms: 1,
-    parkung: false,
+    parking: false,
     furnished: false,
     address: '',
     offer: false,
@@ -109,7 +110,7 @@ function CreateListing() {
     } else {
       geolocation.lat = latitude
       geolocation.lng = longitude
-      location = address
+      // location = address
       // console.log(geolocation, location)
     }
 
@@ -154,7 +155,25 @@ function CreateListing() {
       toast.error('Images not uploaded')
       return
     })
-    console.log(imgUrls)
+    // console.log(imgUrls)
+    const formDataCopy = {
+      ...formData,
+      imgUrls,
+      geolocation,
+      timestamp: serverTimestamp(),
+    }
+
+    formDataCopy.location = address
+    delete formDataCopy.images
+    delete formDataCopy.address
+    // location && (formDataCopy.location = location)
+    !formDataCopy.offer && delete formData.discountedPrice
+
+    const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
+    setLoading(false)
+    toast.success('Listing Saved')
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`)
+
     setLoading(false)
   }
 
