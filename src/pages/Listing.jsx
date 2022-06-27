@@ -1,16 +1,21 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
-import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from 'swiper'
+
+import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/swiper-bundle.css'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+import 'swiper/css/scrollbar'
+import 'swiper/css/a11y'
+
 import { getDoc, doc, collection } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { db } from '../firebase.config'
 import Spinner from '../components/Spinner'
 import shareIcon from '../assets/svg/shareIcon.svg'
 import formatMoney from '../components/MoneyFormatter'
-SwiperCore.use([Navigation, Pagination, Scrollbar, A11y])
 
 function Listing() {
   const [listing, setListing] = useState(null)
@@ -44,13 +49,26 @@ function Listing() {
 
   return (
     <main>
-      <Swiper slidesPerView={1} pagination={{ clickable: true }}>
+      <Swiper
+        modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+        slidesPerView={1}
+        pagination={{ clickable: true }}
+        navigation
+        scrollbar={{ dragable: true }}
+        style={{ height: '300px' }}
+        autoplay={{
+          delay: 3000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+      >
         {listing.imgUrls.map((url, index) => (
           <SwiperSlide key={index}>
             <div
               style={{
                 background: `url(${listing.imgUrls[index]}) center no-repeat`,
                 backgroundSize: 'cover',
+                minHeight: '26rem',
               }}
               className="swiperSlideDiv"
             ></div>
@@ -89,10 +107,12 @@ function Listing() {
         </p>
         {listing.offer && (
           <p className="discountPrice">
-            {/* ${listing.regularPrice - listing.discountedPrice}
-            .toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') */}
-            ${listing.regularPrice - listing.discountedPrice} discount
-            {/* money({listing.regularPrice - listing.discountedPrice}) discount */}
+            $
+            {/* {(listing.regularPrice - listing.discountedPrice)
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} */}
+            {/* ${listing.regularPrice - listing.discountedPrice} discount */}
+            money({listing.regularPrice - listing.discountedPrice}) discount
           </p>
         )}
 
