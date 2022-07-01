@@ -10,12 +10,12 @@ import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import 'swiper/css/a11y'
 
-import { getDoc, doc, collection } from 'firebase/firestore'
+import { getDoc, doc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { db } from '../firebase.config'
 import Spinner from '../components/Spinner'
 import shareIcon from '../assets/svg/shareIcon.svg'
-import formatMoney from '../components/MoneyFormatter'
+import formatMoney from '../utils/MoneyFormatter'
 
 function Listing() {
   const [listing, setListing] = useState(null)
@@ -25,8 +25,6 @@ function Listing() {
   const navigate = useNavigate()
   const params = useParams()
   const auth = getAuth()
-
-  const money = formatMoney()
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -107,12 +105,12 @@ function Listing() {
         </p>
         {listing.offer && (
           <p className="discountPrice">
-            $
             {/* {(listing.regularPrice - listing.discountedPrice)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} */}
             {/* ${listing.regularPrice - listing.discountedPrice} discount */}
-            money({listing.regularPrice - listing.discountedPrice}) discount
+            {formatMoney(listing.regularPrice - listing.discountedPrice)}{' '}
+            discount
           </p>
         )}
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
 import { db } from '../firebase.config'
 import Spinner from './Spinner'
+import formatMoney from '../utils/MoneyFormatter'
 
 import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -45,6 +46,10 @@ function Slider() {
     return <Spinner />
   }
 
+  if (listings.length === 0) {
+    return <></>
+  }
+
   return (
     listings && (
       <>
@@ -78,7 +83,8 @@ function Slider() {
                 >
                   <p className="swiperSlideText">{data.name}</p>
                   <p className="swiperSlidePrice">
-                    ${data.discountedPrice ?? data.regularPrice}
+                    {formatMoney(data.discountedPrice) ??
+                      formatMoney(data.regularPrice)}
                     {data.type === 'rent' && ' / month'}
                   </p>
                 </div>
